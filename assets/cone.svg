@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <rect width="720" height="420" fill="#0c1010"/>
+  <polygon points="360,56 56,364 664,364" fill="#12332e" stroke="#3ee0c8" stroke-dasharray="4 4" stroke-width="1.5"/>
+  <text x="56" y="28" fill="#e07040" font-size="13" font-family="ui-monospace,monospace">SCRATCH #1  cut=root-cause  mood=irritable  doubts=1</text>
+  <text x="132" y="402" text-anchor="middle" fill="#9aa3a1" font-size="12" font-family="ui-monospace,monospace">browser</text><text x="284" y="402" text-anchor="middle" fill="#9aa3a1" font-size="12" font-family="ui-monospace,monospace">desktop</text><text x="436" y="402" text-anchor="middle" fill="#9aa3a1" font-size="12" font-family="ui-monospace,monospace">unreal</text><text x="588" y="402" text-anchor="middle" fill="#9aa3a1" font-size="12" font-family="ui-monospace,monospace">hardware</text>
+  <line x1="350" y1="60.27777777777778" x2="370" y2="60.27777777777778" stroke="#e07040" stroke-width="2">
+      <title>scratch #1 root-cause irritable</title></line>
+  <circle cx="132" cy="62.84444444444445" r="6" fill="#3ee0c8">
+      <title>browser: native submit, full width</title></circle><circle cx="436" cy="295.55555555555554" r="4" fill="#6b5a3a">
+      <title>unreal: courtyard, pawn at origin</title></circle><circle cx="284" cy="90.22222222222223" r="6" fill="#3ee0c8">
+      <title>desktop: editor + running app</title></circle>
+</svg>

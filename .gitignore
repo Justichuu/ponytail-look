@@ -1,0 +1,6 @@
+node_modules/
+data/*.json
+data/*.svg
+data/*.txt
+data/frames/
+!data/.gitkeep

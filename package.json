@@ -1,0 +1,26 @@
+{
+  "name": "neckbeard",
+  "version": "0.1.0",
+  "description": "Ponytail with rung 4 looking. One skill. npm run try.",
+  "license": "MIT",
+  "bin": {
+    "ponytail-try": "./scripts/try.js"
+  },
+  "files": [
+    "AGENTS.md",
+    "hooks/",
+    "skills/",
+    "commands/",
+    "src/",
+    "patches/",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "try": "node scripts/try.js",
+    "verify": "node scripts/verify.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
