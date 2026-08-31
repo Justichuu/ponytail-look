@@ -21,7 +21,7 @@ test('one skill keeps Ponytail\'s promises', () => {
   assert.match(ours, /Do NOT\s+use for non-coding/);
   assert.match(ours, /# ponytail:/);
   assert.match(ours, /not a second ladder/i);
-  assert.match(ours, /Human and agent learn the same/);
+  assert.match(ours, /Human and agent learn\s+the same/);
   assert.match(ours, /only know what the spectacles saw/);
   assert.match(ours, /fewest tokens/);
   assert.match(ours, /<input type="date">/);
