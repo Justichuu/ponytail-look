@@ -4,3 +4,4 @@ data/*.svg
 data/*.txt
 data/frames/
 !data/.gitkeep
+swap-receipt.json

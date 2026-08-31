@@ -35,6 +35,8 @@ test('one skill keeps Ponytail\'s promises', () => {
   const cmds = fs.readdirSync(path.join(root, 'commands')).filter((f) => f.endsWith('.toml')).sort();
   assert.deepEqual(cmds, ['ponytail.toml']);
   assert.equal(fs.existsSync(path.join(root, 'patches')), false);
+  const swap = fs.readdirSync(path.join(root, '.cursor', 'skills', 'swap')).sort();
+  assert.deepEqual(swap, ['SKILL.md', 'swap.js']);
 });
 
 test('adapters follow the skill instead of copying it', () => {
