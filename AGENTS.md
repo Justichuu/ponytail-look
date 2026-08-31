@@ -1,4 +1,4 @@
 # Ponytail
 
-One skill: `skills/ponytail/SKILL.md`. Follow it. Do not add another copy.
-Coding tasks only. `npm run try` is the check.
+Follow `.cursor/skills/ponytail/SKILL.md`. Coding tasks only. `npm run try`.
+Swap is `.cursor/skills/swap`. Do not copy either skill into a User Rule.

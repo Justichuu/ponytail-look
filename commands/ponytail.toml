@@ -1,2 +1,2 @@
 name = "ponytail"
-prompt = "Follow skills/ponytail/SKILL.md. Level {{args}} (default full). Do not add another skill. Coding tasks only. npm run try."
+prompt = "Follow .cursor/skills/ponytail/SKILL.md. Level {{args}} (default full). Coding tasks only. npm run try."

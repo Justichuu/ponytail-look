@@ -21,10 +21,10 @@ Skips `.git` and `node_modules`. Skips non-text. Renames files and
 folders that contain the token. Does not rewrite files with no hit.
 Does not commit. Does not add comments.
 
-It writes `swap-receipt.json` in `--root` (or `--out PATH`). Read that
+Writes `swap-receipt.json` in `--root` (or `--out PATH`). Read that
 file. Tell the user the summary line. Do not commit the receipt.
 
-If the receipt `ok` is true, the swap happened. Do not "double-check" by
-editing files.
+If the receipt `ok` is true, the swap happened. Do not edit files to
+"confirm."
 
 The one check: `node .cursor/skills/swap/swap.js --check`

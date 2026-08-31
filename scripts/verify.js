@@ -56,7 +56,7 @@ function main() {
   if (pony.code !== 0) lines.push(pony.out.slice(-800));
 
   const skill = fs.readFileSync(path.join(ponyDir, 'skills', 'ponytail', 'SKILL.md'), 'utf8');
-  const ours = fs.readFileSync(path.join(root, 'skills', 'ponytail', 'SKILL.md'), 'utf8');
+  const ours = fs.readFileSync(path.join(root, '.cursor', 'skills', 'ponytail', 'SKILL.md'), 'utf8');
   const world = fs.readFileSync(path.join(root, 'src', 'cone.js'), 'utf8');
   const hole = /input type="date"/.test(skill) && /date picker/.test(world);
   lines.push(hole

@@ -1,6 +1,6 @@
 ---
-description: Ponytail with spectacles. Follow the skill. Do not add another.
+description: Ponytail with spectacles. Follow the skill. Do not add another copy.
 alwaysApply: true
 ---
 
-Follow `skills/ponytail/SKILL.md`. One skill. Coding tasks only. `npm run try`.
+Follow `.cursor/skills/ponytail/SKILL.md`. Coding tasks only. `npm run try`.

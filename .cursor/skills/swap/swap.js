@@ -27,8 +27,7 @@ function parse(argv) {
 }
 
 function rel(root, p) {
-  const r = path.relative(root, p);
-  return r || '.';
+  return path.relative(root, p) || '.';
 }
 
 function countSwap(text, from, to) {
@@ -51,8 +50,7 @@ function countSwap(text, from, to) {
 
 function isText(buf) {
   if (buf.includes(0)) return false;
-  const s = buf.toString('utf8');
-  return Buffer.from(s, 'utf8').equals(buf);
+  return Buffer.from(buf.toString('utf8'), 'utf8').equals(buf);
 }
 
 function walk(dir, files, dirs) {
@@ -79,9 +77,26 @@ function walk(dir, files, dirs) {
   }
 }
 
-function swapName(name, from, to) {
-  if (!from || from === to || !name.includes(from)) return name;
-  return countSwap(name, from, to).text;
+function planRenames(paths, from, to) {
+  return paths
+    .map((p) => {
+      const next = countSwap(path.basename(p), from, to);
+      return { from: p, to: path.join(path.dirname(p), next.text) };
+    })
+    .filter((row) => row.from !== row.to)
+    .sort((a, b) => b.from.length - a.from.length);
+}
+
+function applyRenames(rows, root, outFile, renamed, skipped) {
+  for (const row of rows) {
+    if (outFile && path.resolve(row.from) === outFile) continue;
+    if (fs.existsSync(row.to)) {
+      skipped.push({ path: rel(root, row.from), why: `rename blocked, exists ${rel(root, row.to)}` });
+      continue;
+    }
+    fs.renameSync(row.from, row.to);
+    renamed.push({ from: rel(root, row.from), to: rel(root, row.to) });
+  }
 }
 
 function run(input) {
@@ -125,34 +140,8 @@ function run(input) {
   }
 
   const renamed = [];
-  const fileRenames = files
-    .map((file) => ({ from: file, to: path.join(path.dirname(file), swapName(path.basename(file), from, to)) }))
-    .filter((row) => row.from !== row.to)
-    .sort((a, b) => b.from.length - a.from.length);
-
-  for (const row of fileRenames) {
-    if (path.resolve(row.from) === outFile) continue;
-    if (fs.existsSync(row.to)) {
-      skipped.push({ path: rel(root, row.from), why: `rename blocked, exists ${rel(root, row.to)}` });
-      continue;
-    }
-    fs.renameSync(row.from, row.to);
-    renamed.push({ from: rel(root, row.from), to: rel(root, row.to) });
-  }
-
-  const dirRenames = dirs
-    .map((dir) => ({ from: dir, to: path.join(path.dirname(dir), swapName(path.basename(dir), from, to)) }))
-    .filter((row) => row.from !== row.to)
-    .sort((a, b) => b.from.length - a.from.length);
-
-  for (const row of dirRenames) {
-    if (fs.existsSync(row.to)) {
-      skipped.push({ path: rel(root, row.from), why: `rename blocked, exists ${rel(root, row.to)}` });
-      continue;
-    }
-    fs.renameSync(row.from, row.to);
-    renamed.push({ from: rel(root, row.from), to: rel(root, row.to) });
-  }
+  applyRenames(planRenames(files, from, to), root, outFile, renamed, skipped);
+  applyRenames(planRenames(dirs, from, to), root, null, renamed, skipped);
 
   const receipt = {
     ok: true,
@@ -180,46 +169,63 @@ function summary(r) {
   return `swap  ${r.from} → ${r.to}  ${r.counts.hits} hits in ${r.counts.files} files  ${r.counts.renames} renames  receipt=${r.receipt}`;
 }
 
-function check() {
+function withTmp(fn) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'swap-'));
-  const nested = path.join(dir, 'OLDNAME', 'keep');
-  fs.mkdirSync(nested, { recursive: true });
-  fs.writeFileSync(path.join(nested, 'OLDNAME.txt'), 'OLDNAME and OLDNAME\r\n');
-  fs.writeFileSync(path.join(dir, 'skip.bin'), Buffer.from([0, 1, 79, 76, 68, 78, 65, 77, 69]));
-  fs.mkdirSync(path.join(dir, '.git'));
-  fs.writeFileSync(path.join(dir, '.git', 'config'), 'OLDNAME\n');
-  fs.mkdirSync(path.join(dir, 'node_modules', 'pkg'), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'node_modules', 'pkg', 'x.js'), 'OLDNAME\n');
-  fs.writeFileSync(path.join(dir, 'clean.txt'), 'untouched\n');
+  try {
+    return fn(dir);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
 
-  const r = run({ from: 'OLDNAME', to: 'NEWNAME', root: dir, out: path.join(dir, 'swap-receipt.json') });
-  const text = fs.readFileSync(path.join(dir, 'NEWNAME', 'keep', 'NEWNAME.txt'), 'utf8');
-  if (text !== 'NEWNAME and NEWNAME\r\n') throw new Error('content or crlf lost');
-  if (fs.existsSync(path.join(dir, 'OLDNAME'))) throw new Error('folder not renamed');
-  if (fs.readFileSync(path.join(dir, '.git', 'config'), 'utf8') !== 'OLDNAME\n') {
-    throw new Error('.git was touched');
-  }
-  if (fs.readFileSync(path.join(dir, 'node_modules', 'pkg', 'x.js'), 'utf8') !== 'OLDNAME\n') {
-    throw new Error('node_modules was touched');
-  }
-  if (fs.readFileSync(path.join(dir, 'skip.bin'))[0] !== 0) throw new Error('binary was touched');
-  if (fs.readFileSync(path.join(dir, 'clean.txt'), 'utf8') !== 'untouched\n') throw new Error('clean file changed');
-  if (r.counts.hits !== 2 || r.counts.files !== 1) throw new Error(`hits ${r.counts.hits} files ${r.counts.files}`);
-  if (r.counts.renames < 2) throw new Error(`renames ${r.counts.renames}`);
-  const receipt = JSON.parse(fs.readFileSync(path.join(dir, 'swap-receipt.json'), 'utf8'));
-  if (!receipt.ok || receipt.from !== 'OLDNAME' || receipt.to !== 'NEWNAME') {
-    throw new Error('receipt lies');
-  }
-  fs.rmSync(dir, { recursive: true, force: true });
+function check() {
+  withTmp((dir) => {
+    const nested = path.join(dir, 'OLDNAME', 'keep');
+    fs.mkdirSync(nested, { recursive: true });
+    fs.writeFileSync(path.join(nested, 'OLDNAME.txt'), 'OLDNAME and OLDNAME\r\n');
+    fs.writeFileSync(path.join(dir, 'skip.bin'), Buffer.from([0, 1, 79, 76, 68, 78, 65, 77, 69]));
+    fs.mkdirSync(path.join(dir, '.git'));
+    fs.writeFileSync(path.join(dir, '.git', 'config'), 'OLDNAME\n');
+    fs.mkdirSync(path.join(dir, 'node_modules', 'pkg'), { recursive: true });
+    fs.writeFileSync(path.join(dir, 'node_modules', 'pkg', 'x.js'), 'OLDNAME\n');
+    fs.writeFileSync(path.join(dir, 'clean.txt'), 'untouched\n');
 
-  const gone = fs.mkdtempSync(path.join(os.tmpdir(), 'swap-'));
-  fs.writeFileSync(path.join(gone, 'a.txt'), 'keep TOKEN end\n');
-  const r2 = run({ from: 'TOKEN', to: '', root: gone, out: path.join(gone, 'swap-receipt.json') });
-  if (fs.readFileSync(path.join(gone, 'a.txt'), 'utf8') !== 'keep  end\n') {
-    throw new Error('delete token failed');
-  }
-  if (r2.counts.hits !== 1) throw new Error('delete hits');
-  fs.rmSync(gone, { recursive: true, force: true });
+    const r = run({ from: 'OLDNAME', to: 'NEWNAME', root: dir, out: path.join(dir, 'swap-receipt.json') });
+    const text = fs.readFileSync(path.join(dir, 'NEWNAME', 'keep', 'NEWNAME.txt'), 'utf8');
+    if (text !== 'NEWNAME and NEWNAME\r\n') throw new Error('content or crlf lost');
+    if (fs.existsSync(path.join(dir, 'OLDNAME'))) throw new Error('folder not renamed');
+    if (fs.readFileSync(path.join(dir, '.git', 'config'), 'utf8') !== 'OLDNAME\n') throw new Error('.git was touched');
+    if (fs.readFileSync(path.join(dir, 'node_modules', 'pkg', 'x.js'), 'utf8') !== 'OLDNAME\n') {
+      throw new Error('node_modules was touched');
+    }
+    if (fs.readFileSync(path.join(dir, 'skip.bin'))[0] !== 0) throw new Error('binary was touched');
+    if (fs.readFileSync(path.join(dir, 'clean.txt'), 'utf8') !== 'untouched\n') throw new Error('clean file changed');
+    if (r.counts.hits !== 2 || r.counts.files !== 1) throw new Error(`hits ${r.counts.hits} files ${r.counts.files}`);
+    if (r.counts.renames < 2) throw new Error(`renames ${r.counts.renames}`);
+    const receipt = JSON.parse(fs.readFileSync(path.join(dir, 'swap-receipt.json'), 'utf8'));
+    if (!receipt.ok || receipt.from !== 'OLDNAME' || receipt.to !== 'NEWNAME') throw new Error('receipt lies');
+  });
+
+  withTmp((dir) => {
+    fs.writeFileSync(path.join(dir, 'a.txt'), 'keep TOKEN end\n');
+    const r = run({ from: 'TOKEN', to: '', root: dir, out: path.join(dir, 'swap-receipt.json') });
+    if (fs.readFileSync(path.join(dir, 'a.txt'), 'utf8') !== 'keep  end\n') throw new Error('delete token failed');
+    if (r.counts.hits !== 1) throw new Error('delete hits');
+  });
+
+  withTmp((dir) => {
+    fs.writeFileSync(path.join(dir, 'aa.txt'), 'aa');
+    run({ from: 'aa', to: 'aaaa', root: dir, out: path.join(dir, 'swap-receipt.json') });
+    if (fs.readFileSync(path.join(dir, 'aaaa.txt'), 'utf8') !== 'aaaa') throw new Error('to-contains-from looped');
+  });
+
+  withTmp((dir) => {
+    fs.writeFileSync(path.join(dir, 'NEW.txt'), 'x');
+    fs.writeFileSync(path.join(dir, 'OLD.txt'), 'OLD');
+    const r = run({ from: 'OLD', to: 'NEW', root: dir, out: path.join(dir, 'swap-receipt.json') });
+    if (!r.skipped.some((s) => /rename blocked/.test(s.why))) throw new Error('blocked rename not reported');
+    if (!fs.existsSync(path.join(dir, 'OLD.txt'))) throw new Error('clobbered existing target');
+  });
 
   let missing = '';
   try {
@@ -234,7 +240,6 @@ function check() {
     missing = err.message;
   }
   if (!/need --to/.test(missing)) throw new Error('missing --to was allowed');
-  return r;
 }
 
 function main(argv) {

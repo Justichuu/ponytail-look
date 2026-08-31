@@ -9,7 +9,7 @@
   "files": [
     "AGENTS.md",
     "hooks/",
-    "skills/",
+    ".cursor/",
     "commands/",
     "src/",
     "LICENSE"

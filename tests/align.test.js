@@ -6,7 +6,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.join(__dirname, '..');
-const ours = fs.readFileSync(path.join(root, 'skills', 'ponytail', 'SKILL.md'), 'utf8');
+const skills = path.join(root, '.cursor', 'skills');
+const ours = fs.readFileSync(path.join(skills, 'ponytail', 'SKILL.md'), 'utf8');
 const agents = fs.readFileSync(path.join(root, 'AGENTS.md'), 'utf8');
 const rule = fs.readFileSync(path.join(root, '.cursor', 'rules', 'ponytail.mdc'), 'utf8');
 const cmd = fs.readFileSync(path.join(root, 'commands', 'ponytail.toml'), 'utf8');
@@ -30,18 +31,21 @@ test('one skill keeps Ponytail\'s promises', () => {
 
   const src = fs.readdirSync(path.join(root, 'src')).filter((f) => f.endsWith('.js')).sort();
   assert.deepEqual(src, ['cli.js', 'cone.js', 'phi.js', 'scratch.js']);
-  const skillDirs = fs.readdirSync(path.join(root, 'skills')).filter((n) => !n.startsWith('.'));
-  assert.deepEqual(skillDirs, ['ponytail']);
   const cmds = fs.readdirSync(path.join(root, 'commands')).filter((f) => f.endsWith('.toml')).sort();
   assert.deepEqual(cmds, ['ponytail.toml']);
   assert.equal(fs.existsSync(path.join(root, 'patches')), false);
-  const swap = fs.readdirSync(path.join(root, '.cursor', 'skills', 'swap')).sort();
-  assert.deepEqual(swap, ['SKILL.md', 'swap.js']);
+  assert.equal(fs.existsSync(path.join(root, 'skills')), false);
+});
+
+test('skills live in one folder', () => {
+  assert.deepEqual(fs.readdirSync(skills).filter((n) => !n.startsWith('.')).sort(), ['ponytail', 'swap']);
+  assert.deepEqual(fs.readdirSync(path.join(skills, 'ponytail')).sort(), ['SKILL.md']);
+  assert.deepEqual(fs.readdirSync(path.join(skills, 'swap')).sort(), ['SKILL.md', 'swap.js']);
 });
 
 test('adapters follow the skill instead of copying it', () => {
   for (const text of [agents, rule, cmd]) {
-    assert.match(text, /skills\/ponytail\/SKILL\.md/);
+    assert.match(text, /\.cursor\/skills\/ponytail\/SKILL\.md/);
     assert.doesNotMatch(text, /Does this need to exist at all/);
     assert.doesNotMatch(text, /<input type="date">/);
   }
