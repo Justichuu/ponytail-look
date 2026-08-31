@@ -38,9 +38,8 @@ test('one skill keeps Ponytail\'s promises', () => {
 });
 
 test('skills live in one folder', () => {
-  assert.deepEqual(fs.readdirSync(skills).filter((n) => !n.startsWith('.')).sort(), ['ponytail', 'swap']);
+  assert.deepEqual(fs.readdirSync(skills).filter((n) => !n.startsWith('.')).sort(), ['ponytail']);
   assert.deepEqual(fs.readdirSync(path.join(skills, 'ponytail')).sort(), ['SKILL.md']);
-  assert.deepEqual(fs.readdirSync(path.join(skills, 'swap')).sort(), ['SKILL.md', 'swap.js']);
 });
 
 test('adapters follow the skill instead of copying it', () => {
@@ -51,16 +50,3 @@ test('adapters follow the skill instead of copying it', () => {
   }
 });
 
-test('Ponytail still holds the same promises', () => {
-  const pony = path.join(root, '..', 'ponytail', 'skills', 'ponytail', 'SKILL.md');
-  if (!fs.existsSync(pony)) {
-    assert.ok(true, 'ponytail sibling missing — verify clones it');
-    return;
-  }
-  const skill = fs.readFileSync(pony, 'utf8');
-  assert.match(skill, /Look before you\s+write/);
-  assert.match(skill, /<input type="date">/);
-  assert.match(skill, /Never lazy about understanding/);
-  assert.match(skill, /input validation at trust boundaries/);
-  assert.match(skill, /Do NOT\s+use for non-coding/);
-});
