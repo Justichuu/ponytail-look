@@ -13,5 +13,8 @@ test('npm run try is the one check you can run yourself', () => {
   assert.match(r.stdout, /BLIND/);
   assert.match(r.stdout, /UNSEEN/);
   assert.match(r.stdout, /FRESH/);
+  assert.match(r.stdout, /library  refused/);
   assert.match(r.stdout, /mate/);
+  assert.match(r.stdout, /overbuilt-picker/);
+  assert.match(r.stdout, /date\.html/);
 });

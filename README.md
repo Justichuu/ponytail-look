@@ -11,6 +11,9 @@ World surface (`browser`, `desktop`, `unreal`, `hardware`): look with
 the host's eyes. BLIND or UNSEEN — do not edit. Fail closed. If the
 native control is already there, delete. Then climb.
 
+The pile is `examples/overbuilt-picker.jsx`. The fold is
+`examples/date.html`. You do not get the fold by reading the JSX.
+
 ## Test it yourself
 
 ```

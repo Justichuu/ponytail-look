@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 'use strict';
 
+const fs = require('node:fs');
+const path = require('node:path');
 const cone = require('../src/cone');
 const scratch = require('../src/scratch');
+
+function loc(rel) {
+  const text = fs.readFileSync(path.join(__dirname, '..', rel), 'utf8');
+  return text.split(/\r?\n/).filter((row) => row.trim()).length;
+}
 
 function line(n, what, result) {
   process.stdout.write(`${n}  ${what.padEnd(32)} ${result}\n`);
@@ -12,8 +19,11 @@ function main() {
   const t = 10_000;
   let state = scratch.emptyState();
   let c = cone.emptyCone();
+  const pile = loc('examples/overbuilt-picker.jsx');
+  const fold = loc('examples/date.html');
 
-  process.stdout.write('try  date picker  (one skill, rung 4)\n');
+  process.stdout.write(`try  date picker  (one skill, rung 4)\n`);
+  process.stdout.write(`pile  examples/overbuilt-picker.jsx  ${pile} lines\n`);
 
   state = scratch.scratch(state, {
     itch: 'add a date picker',
@@ -56,11 +66,23 @@ function main() {
   const allow = cone.allow(c, 'browser', t);
   line(3, 'look bottom + tap', allow.ok ? 'FRESH' : allow.reason);
 
-  const r = scratch.settle(state, c, t);
-  line(4, 'native input type=date', r.scratch.mate ? 'mate' : 'settled');
+  let lib = 'FAIL';
+  try {
+    const libState = scratch.think(state, { claim: 'install flatpickr and wrap it' }, t).state;
+    scratch.settle(libState, c, t);
+  } catch (err) {
+    if (/native input type=date|do not add/i.test(err.message)) lib = 'library  refused';
+    else throw err;
+  }
+  line(4, 'keep the wrapper library', lib);
 
-  const ok = blind.startsWith('BLIND') && unseen.startsWith('UNSEEN') && allow.ok && r.scratch.mate;
-  process.stdout.write(ok ? '\nrung 4 looked. one skill.\n' : '\ntry failed\n');
+  const r = scratch.settle(state, c, t);
+  line(5, 'native input type=date', r.scratch.mate ? 'mate' : 'settled');
+  process.stdout.write(`fold  examples/date.html             ${fold} lines\n`);
+
+  const ok = blind.startsWith('BLIND') && unseen.startsWith('UNSEEN') && allow.ok
+    && lib.startsWith('library') && r.scratch.mate && pile > 80 && fold < 10;
+  process.stdout.write(ok ? '\nrung 4 looked. the pile is not the product.\n' : '\ntry failed\n');
   return ok ? 0 : 1;
 }
 
