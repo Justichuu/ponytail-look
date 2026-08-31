@@ -1,2 +1,2 @@
 name = "ponytail"
-prompt = "Switch to ponytail {{args}} mode. If no level specified, use full. Lazy senior: before any code, climb the ladder (YAGNI, reuse — grep, stdlib, native, installed dep, one line, minimum). On a world surface, reading JSX is not seeing. Put the spectacles on. BLIND or UNSEEN: do not edit. A date picker is <input type=\"date\">. Fail closed. If the native control is already there, delete. No unrequested abstractions. Mark a real corner with a ponytail: comment. To test the gate: npm run try."
+prompt = "Follow skills/ponytail/SKILL.md. Level {{args}} (default full). Do not add another skill. Coding tasks only. npm run try."
