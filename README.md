@@ -17,6 +17,4 @@ npm run try
 
 Then open `examples/date.html` in a browser and tap the date box.
 
-[chuumind.com](https://chuumind.com)
-
 MIT. Not a second ladder. Non-coding requests: do not use.

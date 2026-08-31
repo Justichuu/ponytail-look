@@ -3,15 +3,6 @@
   "version": "0.1.0",
   "description": "Ponytail with rung 4 spectacles. One skill. npm run try.",
   "license": "MIT",
-  "author": "Justichuu",
-  "homepage": "https://chuumind.com",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Justichuu/ponytail-neckbeard.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Justichuu/ponytail-neckbeard/issues"
-  },
   "bin": {
     "ponytail-try": "./scripts/try.js"
   },
@@ -28,12 +19,6 @@
     "try": "node scripts/try.js",
     "verify": "node scripts/verify.js"
   },
-  "keywords": [
-    "html",
-    "local-first",
-    "happyware",
-    "chuumind"
-  ],
   "engines": {
     "node": ">=18"
   }
