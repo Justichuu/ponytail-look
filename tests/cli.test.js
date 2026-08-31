@@ -44,7 +44,7 @@ test('cli scratch-doubt-think-settle', () => {
 test('cli reject repeating the itch', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
   run(dir, ['scratch', '--itch', 'fix the button', '--seed', 'cli2']);
-  run(dir, ['doubt', '--what', 'no look yet']);
+  run(dir, ['doubt', '--what', 'no spectacles yet']);
   const r = run(dir, ['think', '--claim', 'fix the button']);
   assert.equal(r.code, 1);
   assert.match(r.err, /itch/);
@@ -53,7 +53,7 @@ test('cli reject repeating the itch', () => {
 test('cli draw writes an svg of the cone', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
   run(dir, ['scratch', '--itch', 'viewport', '--surface', 'unreal', '--seed', 'cli3']);
-  run(dir, ['look', '--surface', 'unreal', '--seen', 'pawn at origin', '--source', 'unreal']);
+  run(dir, ['spectacles', '--surface', 'unreal', '--seen', 'pawn at origin', '--source', 'unreal']);
   const r = run(dir, ['draw']);
   assert.equal(r.code, 0);
   const svg = fs.readFileSync(path.join(dir, 'data', 'cone.svg'), 'utf8');
@@ -81,7 +81,7 @@ test('cli shave dumps cache and blocks the next scratch', () => {
 test('cli trim cuts one kind and leaves the rest', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
   run(dir, ['scratch', '--itch', 'first helper', '--seed', 'a', '--now', '1']);
-  run(dir, ['look', '--surface', 'browser', '--seen', 'login form', '--ttl', '10', '--now', '1']);
+  run(dir, ['spectacles', '--surface', 'browser', '--seen', 'login form', '--ttl', '10', '--now', '1']);
   run(dir, ['cache', '--now', '50']);
   let r = run(dir, ['trim', '--kind', 'dust']);
   assert.equal(r.code, 0);
@@ -95,7 +95,7 @@ test('cli trim cuts one kind and leaves the rest', () => {
 test('cli clean washes dust and keeps the length itchy', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
   run(dir, ['scratch', '--itch', 'first helper', '--seed', 'a', '--now', '1']);
-  run(dir, ['look', '--surface', 'browser', '--seen', 'login form', '--ttl', '10', '--now', '1']);
+  run(dir, ['spectacles', '--surface', 'browser', '--seen', 'login form', '--ttl', '10', '--now', '1']);
   run(dir, ['cache', '--now', '50']);
   let r = run(dir, ['clean', '--now', '50']);
   assert.equal(r.code, 0);
@@ -116,7 +116,7 @@ test('cli will not open a second line', () => {
   assert.match(r.err, /argument until settle/);
 });
 
-test('cli glasses and spectacles put the glasses on', () => {
+test('cli spectacles put the spectacles on', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
   let r = run(dir, ['allow']);
   assert.equal(r.code, 1);
@@ -138,12 +138,19 @@ test('cli allow is blind then unseen then timelike', () => {
   let r = run(dir, ['allow', '--surface', 'browser']);
   assert.equal(r.code, 1);
   assert.match(r.out, /BLIND/);
-  run(dir, ['look', '--surface', 'browser', '--seen', 'login form']);
+  run(dir, ['spectacles', '--surface', 'browser', '--seen', 'login form']);
   r = run(dir, ['allow', '--surface', 'browser']);
   assert.equal(r.code, 1);
   assert.match(r.out, /UNSEEN/);
-  run(dir, ['look', '--surface', 'browser', '--seen', 'login form', '--bottom', '--short', '--manual', '--delay-off']);
+  run(dir, ['spectacles', '--surface', 'browser', '--seen', 'login form', '--bottom', '--short', '--manual', '--delay-off']);
   r = run(dir, ['allow', '--surface', 'browser']);
   assert.equal(r.code, 0);
   assert.match(r.out, /timelike/);
+});
+
+test('cli has no look command', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
+  const r = run(dir, ['look', '--surface', 'browser', '--seen', 'x']);
+  assert.equal(r.code, 2);
+  assert.match(r.err, /unknown command/);
 });

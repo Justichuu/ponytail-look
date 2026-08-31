@@ -24,14 +24,14 @@ function smear(state, n) {
 function collapse(state, t) {
   let c = cone.emptyCone();
   const row = scratch.current(state);
-  if (row && scratch.needsLook(row)) {
+  if (row && scratch.needsSpectacles(row)) {
     const seen = cone.observe(c, {
       surface: row.surface || 'browser',
       seen: 'the page',
       ...witness.pass(),
     }, t);
     c = seen.cone;
-    state = scratch.attachLook(state, seen.observation).state;
+    state = scratch.attachSpectacles(state, seen.observation).state;
   }
   return scratch.settle(state, c, t).state;
 }
@@ -42,7 +42,7 @@ function finish(state, claim, t) {
   return collapse(state, t + 2);
 }
 
-test('stale look is harvested as dust on the open line', () => {
+test('stale spectacles are harvested as dust on the open line', () => {
   let c = cone.emptyCone();
   const seen = cone.observe(c, { surface: 'browser', seen: 'login form', ttlMs: 10 }, 0);
   c = seen.cone;
@@ -86,10 +86,10 @@ test('stubble time restores grip without cache', () => {
   assert.equal(r.state.cache.filter((x) => x.kind === 'crumb').length, 1);
 });
 
-test('look after shave is a crumb that helps grip', () => {
+test('spectacles after shave are a crumb that helps grip', () => {
   let { state } = beard.shave(scratch.emptyState(), 0);
   const seen = cone.observe(cone.emptyCone(), { surface: 'unreal', seen: 'pawn at origin' }, 1).observation;
-  state = beard.noteLook(state, seen, 1);
+  state = beard.noteSpectacles(state, seen, 1);
   assert.equal(beard.grip(state, 1), 1);
   assert.equal(state.cache[0].kind, 'crumb');
 });
@@ -131,20 +131,20 @@ test('date picker itch cannot settle blind — ponytail rung 4', () => {
   assert.equal(row.surface, 'browser');
   let s = scratch.doubt(state, { what: 'I have only read the JSX' }).state;
   s = scratch.think(s, { claim: 'use native input type date' }, 2).state;
-  assert.throws(() => scratch.settle(s, cone.emptyCone(), 3), /BLIND|look/);
+  assert.throws(() => scratch.settle(s, cone.emptyCone(), 3), /BLIND|spectacles/);
 });
 
-test('pre-shave look does not legalize a later world settle', () => {
+test('pre-shave spectacles do not legalize a later world settle', () => {
   let c = cone.emptyCone();
   const seen = cone.observe(c, { surface: 'browser', seen: 'old page', ...witness.pass() }, 1_000);
   c = seen.cone;
   const { state } = beard.shave(scratch.emptyState(), 2_000);
   const later = 2_000 + beard.STUBBLE_MS * beard.HARDNESS_SHAVE;
   let s = scratch.scratch(state, { seed: 'ok', itch: 'the button', surface: 'browser' }, later).state;
-  s = scratch.doubt(s, { what: 'that look was before the razor' }).state;
-  s = scratch.attachLook(s, seen.observation).state;
+  s = scratch.doubt(s, { what: 'those spectacles were before the razor' }).state;
+  s = scratch.attachSpectacles(s, seen.observation).state;
   s = scratch.think(s, { claim: 'delete the wrapper' }, later + 1).state;
-  assert.throws(() => scratch.settle(s, c, later + 2), /pre-shave|look/);
+  assert.throws(() => scratch.settle(s, c, later + 2), /pre-shave|spectacles/);
 });
 
 test('filthy beard cannot settle until the rot is named', () => {

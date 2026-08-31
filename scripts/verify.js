@@ -63,7 +63,7 @@ function main() {
     ? 'Date picker is still their example: native <input type="date">, not a library.'
     : 'Date picker example is missing or drifted.');
   const promises = [
-    /Look before you\s+write/,
+    /reuse it\.\s*Grep/i,
     /Does this need to exist at all/,
     /Already in this codebase/,
     /Never lazy about understanding/,

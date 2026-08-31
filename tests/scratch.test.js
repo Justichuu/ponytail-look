@@ -24,14 +24,14 @@ test('reroll never repeats the last cut', () => {
     const t = 1_001 + i * 10;
     state = scratch.doubt(state, { what: `helper ${i} already exists` }, t).state;
     let c = cone.emptyCone();
-    if (scratch.needsLook(r.scratch)) {
+    if (scratch.needsSpectacles(r.scratch)) {
       const seen = cone.observe(c, {
         surface: r.scratch.surface || 'browser',
         seen: 'the page',
         ...witness.pass(),
       }, t);
       c = seen.cone;
-      state = scratch.attachLook(state, seen.observation).state;
+      state = scratch.attachSpectacles(state, seen.observation).state;
     }
     state = scratch.think(state, { claim: `reuse helper ${i}` }, t + 1).state;
     state = scratch.settle(state, c, t + 2).state;
@@ -77,14 +77,14 @@ test('cannot repeat the last thought', () => {
   state = scratch.doubt(state, { what: 'jsx is not the page' }).state;
   state = scratch.think(state, { claim: 'use native submit' }, 1_100).state;
   let c = cone.emptyCone();
-  if (scratch.needsLook(first)) {
+  if (scratch.needsSpectacles(first)) {
     const seen = cone.observe(c, {
       surface: first.surface || 'browser',
       seen: 'the page',
       ...witness.pass(),
     }, 1_150);
     c = seen.cone;
-    state = scratch.attachLook(state, seen.observation).state;
+    state = scratch.attachSpectacles(state, seen.observation).state;
   }
   state = scratch.settle(state, c, 1_200).state;
   assert.equal(first.cut !== state.scratches[1]?.cut || true, true);
@@ -116,10 +116,10 @@ test('observe cut cannot settle blind', () => {
   state.scratches[0].cut = 'observe';
   state = scratch.doubt(state, { what: 'no frame this turn' }, 1_050).state;
   state = scratch.think(state, { claim: 'the picker is already native' }, 1_100).state;
-  assert.throws(() => scratch.settle(state, cone.emptyCone(), 1_200), /BLIND|look/);
+  assert.throws(() => scratch.settle(state, cone.emptyCone(), 1_200), /BLIND|spectacles/);
 });
 
-test('browser look does not attach to a desktop scratch', () => {
+test('browser spectacles do not attach to a desktop scratch', () => {
   let { state } = scratch.scratch(scratch.emptyState(), {
     seed: 'surf',
     itch: 'tray icon',
@@ -128,10 +128,10 @@ test('browser look does not attach to a desktop scratch', () => {
   state.scratches[0].cut = 'observe';
   const seen = cone.observe(cone.emptyCone(), { surface: 'browser', seen: 'a webpage' }, 5_000);
   state = scratch.doubt(state, { what: 'wrong surface' }, 5_050).state;
-  assert.throws(() => scratch.attachLook(state, seen.observation), /browser.*desktop/);
+  assert.throws(() => scratch.attachSpectacles(state, seen.observation), /browser.*desktop/);
 });
 
-test('fresh look on the same surface lets observe settle', () => {
+test('fresh spectacles on the same surface let observe settle', () => {
   let { state } = scratch.scratch(scratch.emptyState(), {
     seed: 'ok',
     itch: 'button',
@@ -142,7 +142,7 @@ test('fresh look on the same surface lets observe settle', () => {
   const seen = cone.observe(c, { surface: 'browser', seen: 'native submit', ...witness.pass() }, 9_000);
   c = seen.cone;
   state = scratch.doubt(state, { what: 'component != page' }).state;
-  state = scratch.attachLook(state, seen.observation).state;
+  state = scratch.attachSpectacles(state, seen.observation).state;
   state = scratch.think(state, { claim: 'delete the wrapper' }, 9_100).state;
   const r = scratch.settle(state, c, 9_200);
   assert.equal(r.scratch.settled, true);

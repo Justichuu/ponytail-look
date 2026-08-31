@@ -19,5 +19,5 @@ test('npm run try is the one check you can run yourself', () => {
   assert.match(r.stdout, /Use the built-in date box\? +Yes/);
   assert.match(r.stdout, /overbuilt-picker/);
   assert.match(r.stdout, /date\.html/);
-  assert.doesNotMatch(r.stdout, /BLIND|UNSEEN|mate|rung 4/);
+  assert.doesNotMatch(r.stdout, /BLIND|UNSEEN|mate|rung 4|\blook\b/i);
 });

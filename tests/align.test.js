@@ -11,7 +11,7 @@ const agents = fs.readFileSync(path.join(root, 'AGENTS.md'), 'utf8');
 
 test('one skill keeps Ponytail\'s promises', () => {
   const text = `${ours}\n${agents}`;
-  assert.match(text, /Look before you\s+write/);
+  assert.match(text, /reuse it\.\s*Grep/i);
   assert.match(text, /Does this need to exist at all/);
   assert.match(text, /Already in this codebase/);
   assert.match(text, /Never lazy about understanding/);
@@ -22,6 +22,7 @@ test('one skill keeps Ponytail\'s promises', () => {
   assert.match(text, /not a second ladder/i);
   assert.match(text, /Human and agent learn the same/);
   assert.match(text, /only know what the spectacles saw/);
+  assert.doesNotMatch(text, /\blook\b/i);
   assert.match(ours, /fewest tokens/);
   assert.match(ours, /<input type="date">/);
   assert.doesNotMatch(ours, /54%/);

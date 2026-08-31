@@ -5,7 +5,7 @@ is a "be lazy" coding skill. One ladder, seven steps. Step 4 says: do not
 install a date-picker library. Use `<input type="date">`.
 
 That step is a guess if you only read the source file. This checkout is
-the same skill with the oval glasses on: on a real UI, reading JSX is not
+the same skill with the spectacles on: on a real UI, reading JSX is not
 seeing. Put the spectacles on. Open the page. Scroll to the end. Then
 ship the built-in control. Do not install both skills.
 

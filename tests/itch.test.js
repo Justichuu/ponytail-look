@@ -39,7 +39,7 @@ test('caption that claims seen before the bottom becomes an explain bug', () => 
   assert.equal(witness.isOn(seen.observation, 1_000), false);
 });
 
-test('a real seen look does not harvest an explain bug', () => {
+test('a real seen spectacles reading does not harvest an explain bug', () => {
   let c = cone.emptyCone();
   const seen = cone.observe(c, {
     surface: 'browser',

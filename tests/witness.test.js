@@ -23,14 +23,14 @@ function openPicker(t, seen, flags) {
     { seed: 'abc', itch: 'add a date picker' },
     t,
   );
-  const looked = cone.observe(cone.emptyCone(), {
+  const seenPage = cone.observe(cone.emptyCone(), {
     surface: 'browser',
     seen,
     ...flags,
   }, t);
   state = scratch.doubt(state, { what: 'I have only read the JSX' }).state;
-  state = scratch.attachLook(state, looked.observation).state;
-  return { state, cone: looked.cone, obs: looked.observation };
+  state = scratch.attachSpectacles(state, seenPage.observation).state;
+  return { state, cone: seenPage.cone, obs: seenPage.observation };
 }
 
 test('mate is the few-line claim, not another product', () => {
@@ -46,7 +46,7 @@ test('fail closed: one bit off is off', () => {
   assert.equal(witness.and([true, true]), true);
 });
 
-test('picker look is not seen at the same instant', () => {
+test('picker spectacles are not seen at the same instant', () => {
   const { state, cone: c } = openPicker(10_000, 'a form', seenFlags());
   const s = scratch.think(state, { claim: 'use native input type date' }, 10_000).state;
   assert.throws(() => scratch.settle(s, c, 10_000), /Waiting|Not seen|Holding/);

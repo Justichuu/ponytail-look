@@ -12,7 +12,7 @@ test('empty cone is blind on world surfaces', () => {
   assert.equal(cone.allow(c, 'code', 100).ok, true);
 });
 
-test('look is fresh inside TTL and stale after', () => {
+test('spectacles are fresh inside TTL and stale after', () => {
   let c = cone.emptyCone();
   const r = cone.observe(c, { surface: 'unreal', seen: 'courtyard, pawn at origin', source: 'unreal' }, 0);
   c = r.cone;
@@ -20,7 +20,7 @@ test('look is fresh inside TTL and stale after', () => {
   assert.equal(cone.allow(c, 'unreal', cone.DEFAULT_TTL_MS + 1).ok, false);
 });
 
-test('browser look is unseen until the lamp is on', () => {
+test('browser spectacles are unseen until the lamp is on', () => {
   let c = cone.emptyCone();
   c = cone.observe(c, { surface: 'browser', seen: 'a twitch at the top' }, 0).cone;
   const dark = cone.allow(c, 'browser', 1_000);
@@ -32,7 +32,7 @@ test('browser look is unseen until the lamp is on', () => {
   assert.equal(lit.reason, 'timelike');
 });
 
-test('same-tick twitch then lamp: last look wins', () => {
+test('same-tick twitch then lamp: last spectacles win', () => {
   let c = cone.emptyCone();
   c = cone.observe(c, { surface: 'browser', seen: 'twitch' }, 5_000).cone;
   c = cone.observe(c, { surface: 'browser', seen: 'end', ...witness.pass() }, 5_000).cone;
@@ -41,13 +41,13 @@ test('same-tick twitch then lamp: last look wins', () => {
   assert.equal(lit.observation.seen, 'end');
 });
 
-test('a look carries the dwell bar', () => {
+test('spectacles carry the dwell bar', () => {
   const r = cone.observe(cone.emptyCone(), { surface: 'unreal', seen: 'pawn' }, 0);
   assert.equal(r.observation.dwellMs, cone.DEFAULT_DWELL_MS);
   assert.equal(r.observation.ttlMs, cone.DEFAULT_TTL_MS);
 });
 
-test('look requires a surface and evidence', () => {
+test('spectacles require a surface and evidence', () => {
   assert.throws(() => cone.observe(cone.emptyCone(), { seen: 'x' }), /surface/);
   assert.throws(() => cone.observe(cone.emptyCone(), { surface: 'browser' }), /seen or proof/);
 });

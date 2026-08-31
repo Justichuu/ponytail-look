@@ -72,13 +72,28 @@ function emptyState() {
   };
 }
 
+function migrateScratch(row) {
+  if (!row || typeof row !== 'object') return row;
+  const next = { ...row };
+  if (next.lookId != null && next.spectaclesId == null) next.spectaclesId = next.lookId;
+  delete next.lookId;
+  return next;
+}
+
+function migrateCache(item) {
+  if (!item || typeof item !== 'object') return item;
+  const next = { ...item };
+  if (next.from === 'look') next.from = 'spectacles';
+  return next;
+}
+
 function normalize(state) {
   const src = state || {};
   const spanSrc = src.span && typeof src.span === 'object' ? src.span : {};
   return {
     version: 1,
-    scratches: Array.isArray(src.scratches) ? src.scratches : [],
-    cache: Array.isArray(src.cache) ? src.cache : [],
+    scratches: Array.isArray(src.scratches) ? src.scratches.map(migrateScratch) : [],
+    cache: Array.isArray(src.cache) ? src.cache.map(migrateCache) : [],
     shavedAt: src.shavedAt ?? null,
     hardness: Number.isFinite(src.hardness) ? src.hardness : 0,
     shaves: Number.isFinite(src.shaves) ? src.shaves : 0,
@@ -136,8 +151,8 @@ function collect(state, input, t) {
   return state;
 }
 
-function harvestDust(state, lookCone, t) {
-  for (const obs of (lookCone && lookCone.observations) || []) {
+function harvestDust(state, coneState, t) {
+  for (const obs of (coneState && coneState.observations) || []) {
     if (isFresh(obs, t)) continue;
     const existing = state.cache.find((x) => x.fromId === obs.id);
     if (existing) {
@@ -147,20 +162,20 @@ function harvestDust(state, lookCone, t) {
     collect(state, {
       kind: 'dust',
       what: obs.seen || obs.proof || obs.surface,
-      from: 'look',
+      from: 'spectacles',
       fromId: obs.id,
     }, t);
   }
   return state;
 }
 
-function noteLook(state, observation, t) {
+function noteSpectacles(state, observation, t) {
   const next = normalize(state);
   if (!observation) return next;
   collect(next, {
     kind: 'crumb',
     what: observation.seen || observation.proof || observation.surface,
-    from: 'look',
+    from: 'spectacles',
     fromId: observation.id,
   }, t);
   return next;
@@ -344,9 +359,9 @@ function claimedSeen(obs) {
   return /\bseen\b/i.test(text) && /bottom|confirmed|you reached/i.test(text);
 }
 
-function harvestExplain(state, lookCone, t) {
+function harvestExplain(state, coneState, t) {
   if (!state || !state.cache) return state;
-  for (const obs of (lookCone && lookCone.observations) || []) {
+  for (const obs of (coneState && coneState.observations) || []) {
     if (!claimedSeen(obs)) continue;
     if (isOn(obs, t)) continue;
     const fromId = `${obs.id}:explain`;
@@ -402,7 +417,7 @@ const beard = {
   normalize,
   collect,
   harvestDust,
-  noteLook,
+  noteSpectacles,
   grabAir,
   isCachedClaim: isFilthyClaim,
   isFilthyClaim,
@@ -628,7 +643,7 @@ function scratch(state, input = {}, t) {
     surface: inferSurface(input.itch, input.surface),
     doubts: [],
     thought: null,
-    lookId: null,
+    spectaclesId: null,
     steps: 0,
     mood: moodFor(next),
     settled: false,
@@ -686,18 +701,18 @@ function doubt(state, input = {}, t) {
   return { state: markHuman(next, t), scratch: row };
 }
 
-function attachLook(state, observation) {
+function attachSpectacles(state, observation) {
   const next = cloneState(state);
   const row = requireOpen(next);
   if (!observation || !observation.id) throw new Error('spectacles produced nothing');
-  if (row.lookId === observation.id) {
+  if (row.spectaclesId === observation.id) {
     throw new Error('already these spectacles');
   }
   if (row.surface && observation.surface && row.surface !== observation.surface) {
     throw new Error(`spectacles are ${observation.surface}, scratch is ${row.surface}`);
   }
-  step(row, needsLook(row) && !row.lookId, next);
-  row.lookId = observation.id;
+  step(row, needsSpectacles(row) && !row.spectaclesId, next);
+  row.spectaclesId = observation.id;
   row.mood = moodFor(next);
   return { state: markHuman(next, observation.t), scratch: row };
 }
@@ -728,15 +743,15 @@ function think(state, input = {}, t) {
   return { state: markAgent(next, t), scratch: row };
 }
 
-function needsLook(row) {
+function needsSpectacles(row) {
   if (row.cut === 'observe') return true;
   return isWorldSurface(row.surface);
 }
 
-function settle(state, lookCone, t) {
+function settle(state, coneState, t) {
   const next = cloneState(state);
-  harvestDust(next, lookCone, t);
-  harvestExplain(next, lookCone, t);
+  harvestDust(next, coneState, t);
+  harvestExplain(next, coneState, t);
   const row = requireOpen(next);
   row.mood = moodFor(next);
   const allowed = new Set(['irritable', 'really-itchy', 'really-really-itchy']);
@@ -752,8 +767,8 @@ function settle(state, lookCone, t) {
   if (level >= 3 && row.doubts.length < 2) {
     throw new Error('really really itchy — two doubts, and name the explain bug');
   }
-  if (needsLook(row)) {
-    const verdict = allow(lookCone, row.surface || 'browser', t, { since: next.shavedAt });
+  if (needsSpectacles(row)) {
+    const verdict = allow(coneState, row.surface || 'browser', t, { since: next.shavedAt });
     if (!verdict.ok) {
       const why = verdict.reason === 'pre-shave'
         ? 'pre-shave spectacles are dead — put them on after the razor'
@@ -762,8 +777,8 @@ function settle(state, lookCone, t) {
           : `${verdict.surface} is BLIND, spectacles first`;
       throw new Error(`spacelike settle — ${why}`);
     }
-    if (!row.lookId) throw new Error('world-facing settle — spectacles on this scratch');
-    if (verdict.observation && row.lookId !== verdict.observation.id) {
+    if (!row.spectaclesId) throw new Error('world-facing settle — spectacles on this scratch');
+    if (verdict.observation && row.spectaclesId !== verdict.observation.id) {
       throw new Error('spectacles on this scratch are stale or pre-shave');
     }
     if (isPickerItch(row.itch)) {
@@ -819,12 +834,12 @@ module.exports = {
   emptyState,
   scratch,
   doubt,
-  attachLook,
+  attachSpectacles,
   think,
   settle,
   current,
   lastScratch,
-  needsLook,
+  needsSpectacles,
   status,
   norm,
   shave,

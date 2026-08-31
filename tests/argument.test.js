@@ -30,7 +30,7 @@ test('same doubt twice is already in the argument', () => {
   assert.throws(() => scratch.doubt(state, { what: 'never saw the page' }, 3), /already in the argument/);
 });
 
-test('same look twice is already this look', () => {
+test('same spectacles twice is already these spectacles', () => {
   let { state } = scratch.scratch(scratch.emptyState(), {
     seed: 'ok',
     itch: 'the button',
@@ -38,8 +38,8 @@ test('same look twice is already this look', () => {
   }, 9_000);
   const seen = cone.observe(cone.emptyCone(), { surface: 'browser', seen: 'native submit', ...witness.pass() }, 9_000);
   state = scratch.doubt(state, { what: 'component != page' }, 9_050).state;
-  state = scratch.attachLook(state, seen.observation).state;
-  assert.throws(() => scratch.attachLook(state, seen.observation), /already these spectacles/);
+  state = scratch.attachSpectacles(state, seen.observation).state;
+  assert.throws(() => scratch.attachSpectacles(state, seen.observation), /already these spectacles/);
 });
 
 test('doubt honors --now so argument order is real', () => {
@@ -62,14 +62,14 @@ test('ponytail will argue 7 rungs; extra steps past that are a loop', () => {
   );
   let c = cone.emptyCone();
   const row = scratch.current(state);
-  if (row && scratch.needsLook(row) && !row.lookId) {
+  if (row && scratch.needsSpectacles(row) && !row.spectaclesId) {
     const seen = cone.observe(c, {
       surface: row.surface || 'browser',
       seen: 'the page',
       ...witness.pass(),
     }, 20);
     c = seen.cone;
-    state = scratch.attachLook(state, seen.observation).state;
+    state = scratch.attachSpectacles(state, seen.observation).state;
   }
   const r = scratch.settle(state, c, 21);
   assert.equal(r.scratch.settled, true);

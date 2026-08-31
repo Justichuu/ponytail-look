@@ -39,14 +39,14 @@ function main() {
   try {
     scratch.settle(state, c, t);
   } catch (err) {
-    if (/BLIND|spacelike|look|spectacles/i.test(err.message)) fromFile = true;
+    if (/BLIND|spacelike|spectacles/i.test(err.message)) fromFile = true;
     else throw err;
   }
   process.stdout.write(`  1. Ship it after only reading the source file?     ${fromFile ? 'No. Never saw the page.' : 'FAIL'}\n`);
 
   const twitch = cone.observe(c, { id: 'try_twitch', surface: 'browser', seen: 'top of the form' }, t);
   c = twitch.cone;
-  state = scratch.attachLook(state, twitch.observation).state;
+  state = scratch.attachSpectacles(state, twitch.observation).state;
 
   let twitchOnly = false;
   try {
@@ -64,7 +64,7 @@ function main() {
     ...cone.pass({ delayOff: true, manualAt: t }),
   }, t);
   c = lit.cone;
-  state = scratch.attachLook(state, lit.observation).state;
+  state = scratch.attachSpectacles(state, lit.observation).state;
   const allow = cone.allow(c, 'browser', t);
   process.stdout.write(`  3. Scroll to the end and confirm you saw it?       ${allow.ok ? 'Yes. Now we have seen the page.' : 'FAIL'}\n`);
 

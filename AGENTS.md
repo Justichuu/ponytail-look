@@ -6,7 +6,7 @@ best code is the code never written. One skill. Not a second ladder.
 Before writing any code, stop at the first rung that holds:
 
 1. Does this need to exist at all? (YAGNI)
-2. Already in this codebase? Reuse it. Look before you write — grep.
+2. Already in this codebase? Reuse it. Grep.
 3. Stdlib does it? Use it.
 4. Native platform feature? Use it. World-facing: only after the
    spectacles are on. Reading JSX is not seeing. A date picker is

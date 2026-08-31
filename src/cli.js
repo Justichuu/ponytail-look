@@ -50,8 +50,8 @@ function lineForSurface(row) {
   return `${row.surface}  FRESH  ${Math.round(row.ageMs / 1000)}s  ${row.seen || ''}`.trim();
 }
 
-function getInstructions(state, look, t) {
-  const coneNow = cone.status(look, t);
+function getInstructions(state, coneState, t) {
+  const coneNow = cone.status(coneState, t);
   const snap = scratch.status(state, coneNow);
   const open = scratch.current(state);
   const coneLines = coneNow.surfaces.map(lineForSurface).join('\n');
@@ -65,7 +65,7 @@ function getInstructions(state, look, t) {
         ? 'SMOOTH. Shave cleared the cache. Harder to scratch — spectacles, wait for stubble, or grab air until grip catches hardness.'
         : 'Scratch when the last thought feels too clean, or a world-facing surface is BLIND.',
       'Each scratch is one line. Until settle, everything is argument — you can go back. Settle collapses it. Do not open a second line. Human and agent learn the same: you only know what the spectacles saw, you only learn a settle.',
-      'A date-picker / button / page itch infers a world surface. BLIND settle is Ponytail rung 4 guessed from JSX. After settle, climb: YAGNI, reuse (grep), stdlib, native, installed dep, one line, minimum. Look before you write.',
+      'A date-picker / button / page itch infers a world surface. BLIND settle is Ponytail rung 4 guessed from JSX. After settle, climb: YAGNI, reuse (grep), stdlib, native, installed dep, one line, minimum.',
       'Crumbs are grip and length. Dust and bullshit are filth — wash/clean is manual. Growing still itches. Lag inside the φ error bar fills or grows the beard. Trim is manual. A wrong seen-caption is an explain bug.',
       'Pre-shave spectacles are dead.',
       '',
@@ -116,7 +116,7 @@ function help() {
 
   scratch [--itch TXT] [--surface browser|desktop|unreal|hardware] [--seed S]
   doubt   --what TXT [--why TXT]
-  spectacles | glasses  --surface S --seen TXT [--proof PATH] [--source frame|text|unreal|dom] [--ttl MS]
+  spectacles  --surface S --seen TXT [--proof PATH] [--source frame|text|unreal|dom] [--ttl MS]
           [--bottom] [--short] [--manual] [--delay-off] [--moved]
   think   --claim TXT
   settle
@@ -183,7 +183,7 @@ function main(argv, root) {
       return 0;
     }
 
-    if (cmd === 'spectacles' || cmd === 'glasses' || cmd === 'look') {
+    if (cmd === 'spectacles') {
       const r = cone.observe(bundle.cone, {
         surface: flags.surface,
         seen: flags.seen,
@@ -198,10 +198,10 @@ function main(argv, root) {
         delayOff: Boolean(flags['delay-off'] || flags.delayOff),
       }, t);
       bundle.cone = r.cone;
-      bundle.state = beard.noteLook(bundle.state, r.observation, t);
+      bundle.state = beard.noteSpectacles(bundle.state, r.observation, t);
       scratch.itch.harvestExplain(bundle.state, bundle.cone, t);
       if (scratch.current(bundle.state)) {
-        const a = scratch.attachLook(bundle.state, r.observation);
+        const a = scratch.attachSpectacles(bundle.state, r.observation);
         bundle.state = a.state;
       } else {
         bundle.state = span.markHuman(bundle.state, t);
