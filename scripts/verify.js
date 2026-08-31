@@ -33,28 +33,35 @@ function ensurePonytail() {
 function main() {
   const lines = [];
   const self = run(root, ['--test', ...fs.readdirSync(path.join(root, 'tests')).filter((f) => f.endsWith('.test.js')).map((f) => path.join('tests', f))]);
-  lines.push(`tests  exit=${self.code}`);
+  lines.push(self.code === 0
+    ? 'This pack\'s tests passed.'
+    : 'This pack\'s tests failed.');
   if (self.code !== 0) lines.push(self.out.slice(-800));
 
   let ponyDir = sibling;
   try {
     ponyDir = ensurePonytail();
   } catch (err) {
-    lines.push(`ponytail clone  fail  ${err.message}`);
+    lines.push(`Could not load Ponytail (${err.message}).`);
     process.stdout.write(lines.join('\n') + '\n');
     process.exitCode = 1;
     return;
   }
 
   const pony = run(ponyDir, ['--test', path.join('tests', 'behavior.test.js')]);
-  lines.push(`ponytail tests  exit=${pony.code}  dir=${path.relative(root, ponyDir) || '.'}`);
+  const rel = path.relative(root, ponyDir) || '.';
+  lines.push(pony.code === 0
+    ? `Ponytail's own tests passed (${rel}).`
+    : `Ponytail's own tests failed (${rel}).`);
   if (pony.code !== 0) lines.push(pony.out.slice(-800));
 
   const skill = fs.readFileSync(path.join(ponyDir, 'skills', 'ponytail', 'SKILL.md'), 'utf8');
   const ours = fs.readFileSync(path.join(root, 'skills', 'ponytail', 'SKILL.md'), 'utf8');
   const world = fs.readFileSync(path.join(root, 'src', 'cone.js'), 'utf8');
   const hole = /input type="date"/.test(skill) && /date picker/.test(world);
-  lines.push(`date-picker hole  ${hole ? 'shared' : 'MISSING'}`);
+  lines.push(hole
+    ? 'Date picker is still their example: native <input type="date">, not a library.'
+    : 'Date picker example is missing or drifted.');
   const promises = [
     /Look before you\s+write/,
     /Does this need to exist at all/,
@@ -66,10 +73,9 @@ function main() {
     /# ponytail:/,
   ];
   const aligned = promises.every((re) => re.test(ours));
-  lines.push(`ponytail promises  ${aligned ? 'aligned' : 'DRIFT'}`);
-
-  const phi = require(path.join(root, 'src', 'phi.js'));
-  lines.push(`φ bars  dwell=${phi.dwellMs} ttl=${phi.ttlMs} steps=${phi.stepMargin} filth=${phi.filthLimit}`);
+  lines.push(aligned
+    ? 'This skill still keeps Ponytail\'s promises. Same ladder, with the look on.'
+    : 'This skill drifted away from Ponytail\'s promises.');
 
   const text = lines.join('\n') + '\n';
   process.stdout.write(text);

@@ -1,34 +1,34 @@
-# Ponytail
+# Ponytail, with a look at the page
 
 [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
-is lazy-senior mode. One skill. Seven rungs. Look before you write is
-grep. Rung 4 is `<input type="date">`.
+is a "be lazy" coding skill. One ladder, seven steps. Step 4 says: do not
+install a date-picker library. Use `<input type="date">`.
 
-That rung is a guess if you only read JSX. This checkout is that same
-skill with the look on. Do not install both.
+That step is a guess if you only read the source file. This checkout is
+the same skill with one extra rule: on a real UI, reading JSX is not
+looking. Open the page. Scroll to the end. Then ship the built-in control.
+Do not install both skills.
 
-World surface (`browser`, `desktop`, `unreal`, `hardware`): look with
-the host's eyes. BLIND or UNSEEN — do not edit. Fail closed. If the
-native control is already there, delete. Then climb.
-
-The pile is `examples/overbuilt-picker.jsx`. The fold is
-`examples/date.html`. You do not get the fold by reading the JSX.
-
-## Test it yourself
+## The one command a person can read
 
 ```
 npm run try
 ```
 
-It asks five questions in English: can you ship from the file only,
-from a glance, after seeing the page, by installing a library, or with
-the built-in date box. Only the last one is yes. Then open
-`examples/date.html` in a browser.
+It walks through the date-picker example in English. Shipping from the
+file is no. A glance is no. A library is no. The built-in date box is
+yes. Then open `examples/date.html` in a browser and tap it.
+
+`examples/overbuilt-picker.jsx` is the usual dump. `examples/date.html`
+is what you ship. You do not get the second file by reading the first.
 
 ```
 npm test
 npm run verify
 ```
 
-MIT. Not a second ladder. Not their measured cost or LOC numbers. The
-rule was never fewest tokens. Non-coding requests: do not use.
+Those are for changing the pack. The test names are internals. Skip them
+unless you are editing this repo.
+
+MIT. Not a second ladder. Not their measured cost or line-count numbers.
+The rule was never fewest tokens. Non-coding requests: do not use.
