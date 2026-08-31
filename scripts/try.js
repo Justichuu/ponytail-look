@@ -23,8 +23,8 @@ function main() {
   process.stdout.write(`What people usually paste:          ${dump} lines   examples/overbuilt-picker.jsx\n`);
   process.stdout.write(`What the browser already draws:     ${native} lines     examples/date.html\n\n`);
   process.stdout.write('Ponytail already says: use the built-in date box.\n');
-  process.stdout.write('The extra rule here: you only get to ship that after you\n');
-  process.stdout.write('have looked at the running page. Reading the source is not looking.\n\n');
+  process.stdout.write('The extra rule here: you only get to ship that after the\n');
+  process.stdout.write('spectacles are on. Reading the source is not seeing.\n\n');
   process.stdout.write('What happens if you try anyway:\n\n');
 
   state = scratch.scratch(state, {
@@ -39,7 +39,7 @@ function main() {
   try {
     scratch.settle(state, c, t);
   } catch (err) {
-    if (/BLIND|spacelike|look/i.test(err.message)) fromFile = true;
+    if (/BLIND|spacelike|look|spectacles/i.test(err.message)) fromFile = true;
     else throw err;
   }
   process.stdout.write(`  1. Ship it after only reading the source file?     ${fromFile ? 'No. Never saw the page.' : 'FAIL'}\n`);

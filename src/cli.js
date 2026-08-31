@@ -62,12 +62,12 @@ function getInstructions(state, look, t) {
       'PONYTAIL idle.',
       beardLine,
       snap.beard && snap.beard.smooth
-        ? 'SMOOTH. Shave cleared the cache. Harder to scratch — look, wait for stubble, or grab air until grip catches hardness.'
+        ? 'SMOOTH. Shave cleared the cache. Harder to scratch — spectacles, wait for stubble, or grab air until grip catches hardness.'
         : 'Scratch when the last thought feels too clean, or a world-facing surface is BLIND.',
-      'Each scratch is one line. Until settle, everything is argument — you can go back. Settle collapses it. Do not open a second line. Human and agent learn the same: you only know a look, you only learn a settle.',
+      'Each scratch is one line. Until settle, everything is argument — you can go back. Settle collapses it. Do not open a second line. Human and agent learn the same: you only know what the spectacles saw, you only learn a settle.',
       'A date-picker / button / page itch infers a world surface. BLIND settle is Ponytail rung 4 guessed from JSX. After settle, climb: YAGNI, reuse (grep), stdlib, native, installed dep, one line, minimum. Look before you write.',
       'Crumbs are grip and length. Dust and bullshit are filth — wash/clean is manual. Growing still itches. Lag inside the φ error bar fills or grows the beard. Trim is manual. A wrong seen-caption is an explain bug.',
-      'Pre-shave looks are dead.',
+      'Pre-shave spectacles are dead.',
       '',
       coneLines,
     ].join('\n');
@@ -112,11 +112,11 @@ function print(flags, text, obj) {
 }
 
 function help() {
-  return `look check — used by npm run try
+  return `spectacles check — used by npm run try
 
   scratch [--itch TXT] [--surface browser|desktop|unreal|hardware] [--seed S]
   doubt   --what TXT [--why TXT]
-  look    --surface S --seen TXT [--proof PATH] [--source frame|text|unreal|dom] [--ttl MS]
+  spectacles | glasses  --surface S --seen TXT [--proof PATH] [--source frame|text|unreal|dom] [--ttl MS]
           [--bottom] [--short] [--manual] [--delay-off] [--moved]
   think   --claim TXT
   settle
@@ -127,7 +127,7 @@ function help() {
   cache
   status
   draw    [--out data/cone.svg]
-  allow | glasses | spectacles  [--surface S]
+  allow   [--surface S]
 `;
 }
 
@@ -164,7 +164,7 @@ function main(argv, root) {
         }, t);
         bundle.state = r.state;
         save(bundle, root);
-        print(flags, formatScratch(r.scratch) + '\n' + beard.formatCache(r.state, t) + '\nargument until settle. doubt, look if you must, think. you can go back.', r.scratch);
+        print(flags, formatScratch(r.scratch) + '\n' + beard.formatCache(r.state, t) + '\nargument until settle. doubt, spectacles if you must, think. you can go back.', r.scratch);
         return 0;
       } catch (err) {
         if (err.code === 'SMOOTH' && err.state) {
@@ -183,7 +183,7 @@ function main(argv, root) {
       return 0;
     }
 
-    if (cmd === 'look') {
+    if (cmd === 'spectacles' || cmd === 'glasses' || cmd === 'look') {
       const r = cone.observe(bundle.cone, {
         surface: flags.surface,
         seen: flags.seen,
@@ -208,7 +208,7 @@ function main(argv, root) {
       }
       save(bundle, root);
       const lamp = scratch.witness.explain(r.observation, t);
-      print(flags, `look ${r.observation.surface}: ${r.observation.seen || r.observation.proof}\n${lamp.why}`, {
+      print(flags, `spectacles ${r.observation.surface}: ${r.observation.seen || r.observation.proof}\n${lamp.why}`, {
         ...r.observation,
         on: lamp.on,
         why: lamp.why,
@@ -290,7 +290,7 @@ function main(argv, root) {
       return 0;
     }
 
-    if (cmd === 'allow' || cmd === 'glasses' || cmd === 'spectacles') {
+    if (cmd === 'allow') {
       if (!flags.surface) {
         const snap = cone.status(bundle.cone, t);
         const text = snap.surfaces.map(lineForSurface).join('\n');

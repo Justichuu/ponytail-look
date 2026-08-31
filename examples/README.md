@@ -2,7 +2,7 @@
 
 Ponytail already says a date picker is `<input type="date">`.
 Guessing that from a JSX dump is the bug. This folder is the dump, then
-the look, then the four-line file you actually ship.
+the spectacles, then the four-line file you actually ship.
 
 `overbuilt-picker.jsx` is the usual paste: provider, timezone, a picker
 library, a second calendar, range "for later". Easy to treat as the

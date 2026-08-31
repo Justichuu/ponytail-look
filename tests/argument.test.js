@@ -39,7 +39,7 @@ test('same look twice is already this look', () => {
   const seen = cone.observe(cone.emptyCone(), { surface: 'browser', seen: 'native submit', ...witness.pass() }, 9_000);
   state = scratch.doubt(state, { what: 'component != page' }, 9_050).state;
   state = scratch.attachLook(state, seen.observation).state;
-  assert.throws(() => scratch.attachLook(state, seen.observation), /already this look/);
+  assert.throws(() => scratch.attachLook(state, seen.observation), /already these spectacles/);
 });
 
 test('doubt honors --now so argument order is real', () => {

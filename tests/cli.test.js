@@ -116,19 +116,19 @@ test('cli will not open a second line', () => {
   assert.match(r.err, /argument until settle/);
 });
 
-test('cli glasses and spectacles are allow', () => {
+test('cli glasses and spectacles put the glasses on', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-'));
-  let r = run(dir, ['glasses']);
+  let r = run(dir, ['allow']);
   assert.equal(r.code, 1);
   assert.match(r.out, /BLIND/);
   r = run(dir, ['spectacles', '--surface', 'browser']);
   assert.equal(r.code, 1);
-  assert.match(r.out, /BLIND/);
-  run(dir, ['look', '--surface', 'browser', '--seen', 'login form', '--bottom', '--short', '--manual', '--delay-off']);
-  r = run(dir, ['spectacles', '--surface', 'browser']);
+  assert.match(r.err, /seen or proof/);
+  run(dir, ['spectacles', '--surface', 'browser', '--seen', 'login form', '--bottom', '--short', '--manual', '--delay-off']);
+  r = run(dir, ['allow', '--surface', 'browser']);
   assert.equal(r.code, 0);
   assert.match(r.out, /timelike/);
-  r = run(dir, ['glasses']);
+  r = run(dir, ['allow']);
   assert.equal(r.code, 0);
   assert.match(r.out, /browser  FRESH/);
 });

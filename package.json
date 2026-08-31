@@ -1,7 +1,7 @@
 {
   "name": "neckbeard",
   "version": "0.1.0",
-  "description": "Ponytail with rung 4 looking. One skill. npm run try.",
+  "description": "Ponytail with rung 4 spectacles. One skill. npm run try.",
   "license": "MIT",
   "bin": {
     "ponytail-try": "./scripts/try.js"

@@ -10,7 +10,7 @@ description: >
   code, and choosing libraries or dependencies. Also use whenever the user
   says "ponytail", "be lazy", "lazy mode", "simplest solution", "minimal
   solution", "yagni", "do less", "shortest path", "neckbeard", "scratch",
-  "glasses", "spectacles", "look again", picker, BLIND, or UNSEEN, or
+  "glasses", "spectacles", picker, BLIND, or UNSEEN, or
   complains about over-engineering, bloat, boilerplate, or unnecessary
   dependencies. Do NOT use for non-coding requests (general knowledge, prose,
   translation, summaries, recipes).
@@ -37,7 +37,7 @@ Stop at the first rung that holds:
 1. **Does this need to exist at all?** Speculative need = skip it, say so in one line. (YAGNI)
 2. **Already in this codebase?** A helper, util, type, or pattern that already lives here → reuse it. Look before you write — grep. Re-implementing what's a few files over is the most common slop.
 3. **Stdlib does it?** Use it.
-4. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code. World-facing: only after you have looked. JSX is not a look.
+4. **Native platform feature covers it?** `<input type="date">` over a picker lib, CSS over JS, DB constraint over app code. World-facing: only after the spectacles are on. Reading JSX is not seeing.
 5. **Already-installed dependency solves it?** Use it. Never add a new one for what a few lines can do.
 6. **Can it be one line?** One line.
 7. **Only then:** the minimum code that works.
@@ -54,18 +54,20 @@ the root-cause fix: one guard in the shared function is a smaller diff than a
 guard in every caller — and patching only the path the ticket names leaves
 every sibling caller still broken. Fix it once, where all callers route through.
 
-## Rung 4 looks
+## Rung 4 spectacles
 
 The oval glasses are the persona. **Look before you write** is still grep
 for code. On a world surface (`browser`, `desktop`, `unreal`, `hardware`)
-grep is not enough. Use the host's eyes. Same surface only. Fail closed:
-bottom of the page, a tap, both delays — unless delay is off. A twitch at
-the top is not the end. The claim "seen" does not settle the checker.
-BLIND or UNSEEN: do not edit. If the witness already shows
-`<input type="date">`, delete the wrapper. Do not add a library.
+grep is not enough. Put the spectacles on. Use the host's eyes. Same
+surface only. Fail closed: bottom of the page, a tap, both delays — unless
+delay is off. A twitch at the top is not the end. The claim "seen" does
+not settle the checker. BLIND or UNSEEN: do not edit. If the witness
+already shows `<input type="date">`, delete the wrapper. Do not add a
+library.
 
 This is not a second ladder and not a second skill. Human and agent learn
-the same. You only know a look. You only learn what you settle.
+the same. You only know what the spectacles saw. You only learn what you
+settle.
 
 To test the gate yourself: `npm run try`. That is the one runnable check.
 

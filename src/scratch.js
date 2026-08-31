@@ -591,7 +591,7 @@ function openError() {
 
 function smoothError(next, verdict) {
   const err = new Error(
-    `smooth: grip ${verdict.grip}/${verdict.hardness}. nothing to grab. look, wait for stubble, or grab air again.`,
+    `smooth: grip ${verdict.grip}/${verdict.hardness}. nothing to grab. spectacles, wait for stubble, or grab air again.`,
   );
   err.code = 'SMOOTH';
   err.state = next;
@@ -689,12 +689,12 @@ function doubt(state, input = {}, t) {
 function attachLook(state, observation) {
   const next = cloneState(state);
   const row = requireOpen(next);
-  if (!observation || !observation.id) throw new Error('look produced nothing');
+  if (!observation || !observation.id) throw new Error('spectacles produced nothing');
   if (row.lookId === observation.id) {
-    throw new Error('already this look');
+    throw new Error('already these spectacles');
   }
   if (row.surface && observation.surface && row.surface !== observation.surface) {
-    throw new Error(`look is ${observation.surface}, scratch is ${row.surface}`);
+    throw new Error(`spectacles are ${observation.surface}, scratch is ${row.surface}`);
   }
   step(row, needsLook(row) && !row.lookId, next);
   row.lookId = observation.id;
@@ -756,15 +756,15 @@ function settle(state, lookCone, t) {
     const verdict = allow(lookCone, row.surface || 'browser', t, { since: next.shavedAt });
     if (!verdict.ok) {
       const why = verdict.reason === 'pre-shave'
-        ? 'pre-shave look is dead — look again after the razor'
+        ? 'pre-shave spectacles are dead — put them on after the razor'
         : verdict.reason === 'unseen'
           ? (verdict.why || cone.explain(verdict.observation, t).why)
-          : `${verdict.surface} is BLIND, look first`;
+          : `${verdict.surface} is BLIND, spectacles first`;
       throw new Error(`spacelike settle — ${why}`);
     }
-    if (!row.lookId) throw new Error('world-facing settle — look on this scratch');
+    if (!row.lookId) throw new Error('world-facing settle — spectacles on this scratch');
     if (verdict.observation && row.lookId !== verdict.observation.id) {
-      throw new Error('look on this scratch is stale or pre-shave');
+      throw new Error('spectacles on this scratch are stale or pre-shave');
     }
     if (isPickerItch(row.itch)) {
       const fix = pickerFix(verdict.observation.seen, row.thought.claim);

@@ -1,13 +1,13 @@
-# Ponytail, with a look at the page
+# Ponytail, with spectacles
 
 [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)
 is a "be lazy" coding skill. One ladder, seven steps. Step 4 says: do not
 install a date-picker library. Use `<input type="date">`.
 
 That step is a guess if you only read the source file. This checkout is
-the same skill with one extra rule: on a real UI, reading JSX is not
-looking. Open the page. Scroll to the end. Then ship the built-in control.
-Do not install both skills.
+the same skill with the oval glasses on: on a real UI, reading JSX is not
+seeing. Put the spectacles on. Open the page. Scroll to the end. Then
+ship the built-in control. Do not install both skills.
 
 ## The one command a person can read
 

@@ -11,6 +11,7 @@ test('npm run try is the one check you can run yourself', () => {
   });
   assert.equal(r.status, 0, r.stderr || r.stdout);
   assert.match(r.stdout, /walkthrough/);
+  assert.match(r.stdout, /spectacles are on/);
   assert.match(r.stdout, /Never saw the page/);
   assert.match(r.stdout, /not the whole page/);
   assert.match(r.stdout, /seen the page/);

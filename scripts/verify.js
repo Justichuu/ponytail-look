@@ -74,7 +74,7 @@ function main() {
   ];
   const aligned = promises.every((re) => re.test(ours));
   lines.push(aligned
-    ? 'This skill still keeps Ponytail\'s promises. Same ladder, with the look on.'
+    ? 'This skill still keeps Ponytail\'s promises. Same ladder, with the spectacles on.'
     : 'This skill drifted away from Ponytail\'s promises.');
 
   const text = lines.join('\n') + '\n';

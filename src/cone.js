@@ -169,8 +169,8 @@ function isFresh(obs, t) {
 
 function observe(cone, input, t) {
   const surface = normalizeSurface(input.surface);
-  if (!surface) throw new Error('look needs a surface');
-  if (!input.seen && !input.proof) throw new Error('look needs seen or proof');
+  if (!surface) throw new Error('spectacles need a surface');
+  if (!input.seen && !input.proof) throw new Error('spectacles need seen or proof');
   const observation = {
     id: input.id || `obs_${now(t).toString(36)}`,
     t: now(t),
