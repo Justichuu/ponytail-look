@@ -20,12 +20,10 @@ The pile is `examples/overbuilt-picker.jsx`. The fold is
 npm run try
 ```
 
-```
-1  settle from JSX                  BLIND  refused
-2  look without the lamp            UNSEEN  refused
-3  look bottom + tap                FRESH
-4  native input type=date           mate
-```
+It asks five questions in English: can you ship from the file only,
+from a glance, after seeing the page, by installing a library, or with
+the built-in date box. Only the last one is yes. Then open
+`examples/date.html` in a browser.
 
 ```
 npm test

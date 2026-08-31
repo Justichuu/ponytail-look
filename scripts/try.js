@@ -11,10 +11,6 @@ function loc(rel) {
   return text.split(/\r?\n/).filter((row) => row.trim()).length;
 }
 
-function line(n, what, result) {
-  process.stdout.write(`${n}  ${what.padEnd(32)} ${result}\n`);
-}
-
 function main() {
   const t = 10_000;
   let state = scratch.emptyState();
@@ -22,8 +18,9 @@ function main() {
   const pile = loc('examples/overbuilt-picker.jsx');
   const fold = loc('examples/date.html');
 
-  process.stdout.write(`try  date picker  (one skill, rung 4)\n`);
-  process.stdout.write(`pile  examples/overbuilt-picker.jsx  ${pile} lines\n`);
+  process.stdout.write('Someone asked for a date picker.\n\n');
+  process.stdout.write(`The usual dump is ${pile} lines (examples/overbuilt-picker.jsx).\n`);
+  process.stdout.write(`The browser already has a date box. That is ${fold} lines (examples/date.html).\n\n`);
 
   state = scratch.scratch(state, {
     itch: 'add a date picker',
@@ -33,27 +30,27 @@ function main() {
   state = scratch.doubt(state, { what: 'I have only read the JSX' }, t).state;
   state = scratch.think(state, { claim: 'use native input type date' }, t).state;
 
-  let blind = 'FAIL';
+  let fromFile = false;
   try {
     scratch.settle(state, c, t);
   } catch (err) {
-    if (/BLIND|spacelike|look/i.test(err.message)) blind = 'BLIND  refused';
+    if (/BLIND|spacelike|look/i.test(err.message)) fromFile = true;
     else throw err;
   }
-  line(1, 'settle from JSX', blind);
+  process.stdout.write(`1. Ship it after only reading the source file?  ${fromFile ? 'No. Never saw the page.' : 'FAIL'}\n`);
 
   const twitch = cone.observe(c, { id: 'try_twitch', surface: 'browser', seen: 'top of the form' }, t);
   c = twitch.cone;
   state = scratch.attachLook(state, twitch.observation).state;
 
-  let unseen = 'FAIL';
+  let twitchOnly = false;
   try {
     scratch.settle(state, c, t);
   } catch (err) {
-    if (/UNSEEN|spacelike|bottom|Not seen|Waiting|Tap/i.test(err.message)) unseen = 'UNSEEN  refused';
+    if (/UNSEEN|spacelike|bottom|Not seen|Waiting|Tap/i.test(err.message)) twitchOnly = true;
     else throw err;
   }
-  line(2, 'look without the lamp', unseen);
+  process.stdout.write(`2. Glance at the top of the page?               ${twitchOnly ? 'No. That is not the whole page.' : 'FAIL'}\n`);
 
   const lit = cone.observe(c, {
     id: 'try_lamp',
@@ -64,25 +61,25 @@ function main() {
   c = lit.cone;
   state = scratch.attachLook(state, lit.observation).state;
   const allow = cone.allow(c, 'browser', t);
-  line(3, 'look bottom + tap', allow.ok ? 'FRESH' : allow.reason);
+  process.stdout.write(`3. Scroll to the end and confirm you saw it?    ${allow.ok ? 'Yes. Now we have seen the page.' : 'FAIL'}\n`);
 
-  let lib = 'FAIL';
+  let noLib = false;
   try {
     const libState = scratch.think(state, { claim: 'install flatpickr and wrap it' }, t).state;
     scratch.settle(libState, c, t);
   } catch (err) {
-    if (/native input type=date|do not add/i.test(err.message)) lib = 'library  refused';
+    if (/native input type=date|do not add/i.test(err.message)) noLib = true;
     else throw err;
   }
-  line(4, 'keep the wrapper library', lib);
+  process.stdout.write(`4. Install a date-picker library anyway?        ${noLib ? 'No. The browser already has one.' : 'FAIL'}\n`);
 
   const r = scratch.settle(state, c, t);
-  line(5, 'native input type=date', r.scratch.mate ? 'mate' : 'settled');
-  process.stdout.write(`fold  examples/date.html             ${fold} lines\n`);
+  process.stdout.write(`5. Use the built-in date box?                   ${r.scratch.mate ? 'Yes.' : 'FAIL'}\n`);
 
-  const ok = blind.startsWith('BLIND') && unseen.startsWith('UNSEEN') && allow.ok
-    && lib.startsWith('library') && r.scratch.mate && pile > 80 && fold < 10;
-  process.stdout.write(ok ? '\nrung 4 looked. the pile is not the product.\n' : '\ntry failed\n');
+  const ok = fromFile && twitchOnly && allow.ok && noLib && r.scratch.mate && pile > 80 && fold < 10;
+  process.stdout.write(ok
+    ? `\nDone. The ${pile}-line pile is not the product. Open examples/date.html in a browser to tap the real box.\n`
+    : '\ntry failed\n');
   return ok ? 0 : 1;
 }
 

@@ -10,11 +10,11 @@ test('npm run try is the one check you can run yourself', () => {
     encoding: 'utf8',
   });
   assert.equal(r.status, 0, r.stderr || r.stdout);
-  assert.match(r.stdout, /BLIND/);
-  assert.match(r.stdout, /UNSEEN/);
-  assert.match(r.stdout, /FRESH/);
-  assert.match(r.stdout, /library  refused/);
-  assert.match(r.stdout, /mate/);
+  assert.match(r.stdout, /Never saw the page/);
+  assert.match(r.stdout, /not the whole page/);
+  assert.match(r.stdout, /seen the page/);
+  assert.match(r.stdout, /already has one/);
+  assert.match(r.stdout, /Use the built-in date box\? +Yes/);
   assert.match(r.stdout, /overbuilt-picker/);
   assert.match(r.stdout, /date\.html/);
 });
